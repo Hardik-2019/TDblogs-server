@@ -5,12 +5,17 @@ var bodyParser = require('body-parser');
 var cors = require('cors');
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false   }));
+var config = require('./config');
 app.use(bodyParser.json());
 var con = mysql.createConnection({
-    host:"localhost",
-    user:"root",
-    password:"",
-    database:"tdblogs"
+    // host:"localhost",
+    // user:"root",
+    // password:"",
+    // database:"tdblogs"
+    host: config.host,
+    user: config.user,
+    password: config.password,
+    database: config.database,
 });
 
 con.connect((err) => {
@@ -19,7 +24,7 @@ con.connect((err) => {
 })
 
 app.get("/show_blogs",(req,res)=>{
-    var sql = 'SELECT blogs.id, blogs.title, blogs.description, blogs.link, blogs.auth_id, author.name, author.photo, author.bio, author.linkedIn FROM author, blogs WHERE author.auth_id=blogs.auth_id;';
+    var sql = 'SELECT blogs.id, blogs.title, blogs.description, blogs.link, blogs.auth_id, author.name, author.photo, author.bio, author.linkedIn , author.github FROM author, blogs WHERE author.auth_id=blogs.auth_id;';
     con.query(sql,(err,result)=>{
         if(err){
             console.log(err);
@@ -38,7 +43,7 @@ app.get("/show_blogs",(req,res)=>{
 app.post("/search",(req,res)=>{
     var term = req.body.term;
 
-    var sql= 'SELECT blogs.id, blogs.title, blogs.description, blogs.link, blogs.auth_id, author.name, author.photo, author.bio, author.linkedIn FROM author, blogs WHERE author.auth_id=blogs.auth_id AND CONCAT(title,description) LIKE ("%'+term+'%")';
+    var sql= 'SELECT blogs.id, blogs.title, blogs.description, blogs.link, blogs.auth_id, author.name, author.photo, author.bio, author.linkedIn , author.github FROM author, blogs WHERE author.auth_id=blogs.auth_id AND CONCAT(title,description) LIKE ("%'+term+'%")';
     
 
  
